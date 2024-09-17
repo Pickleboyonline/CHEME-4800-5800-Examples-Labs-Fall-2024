@@ -36,6 +36,12 @@ function bubble_sort(array::Array{T,1};
 
                 # TODO: swap that values at j and j+1
                 throw("The bubble_sort function is not implemented yet.");
+                t = arr[j]
+                arr[j] = arr[j+1]
+                arr[j+1] =  t
+                # arr[j] = arr[j+1] / arr[j]
+                # arr[j+1] = (1 / arr[j+1]) * arr[j+1]
+                # arr[j] = arr[j] * arr[j+1]
             end
         end
     end
@@ -81,7 +87,9 @@ function bubble_sort!(array::Array{T,1};
             if arr[j] > arr[j+1]
 
                 # TODO: swap that values at j and j+1
-                throw("The bubble_sort! function is not implemented yet.");
+                t = arr[j]
+                arr[j] = arr[j+1]
+                arr[j+1] =  t
             end
         end
     end
