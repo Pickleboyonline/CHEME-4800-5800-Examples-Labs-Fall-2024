@@ -1,3 +1,9 @@
+function _deepclean(s::String)::String
+    return s;
+end
+
+
+
 """
     build(model::Type{MyMoviewReviewRecordModel}, line::String; delim::String=",") -> MyMoviewReviewRecordModel
 
@@ -11,13 +17,14 @@ Builds an instance of the `MyMoviewReviewRecordModel` type from a line of text.
 ### Returns
 - `MyMoviewReviewRecordModel`: An instance of the `MyMoviewReviewRecordModel` type.
 """
-function build(model::Type{MyMoviewReviewRecordModel}, line::String; delim::String=",")::MyMoviewReviewRecordModel
+function build(model::Type{MyMoviewReviewRecordModel}, review::String; 
+    delim::String=",")::MyMoviewReviewRecordModel
     
     # initialize -
     tokenset = Set{String}(); # build an empty set
     cleaned_fields_data = Array{String,1}(); # build an empty array
     hash = Dict{String,Int64}();
-    record = MyMoviewReviewRecordModel(); # build an empty model
+    record = model(); # build an empty model
     
     # do NOT include puncuation in the tokens -
     puncuation_skip_set = Set{String}();
@@ -36,14 +43,18 @@ function build(model::Type{MyMoviewReviewRecordModel}, line::String; delim::Stri
     push!(puncuation_skip_set, "_");
     
     # split the line around the delim. Check out: https://docs.julialang.org/en/v1/base/strings/#Base.split
-    fields = split(line, delim) .|> String; # make strings out of the fields
-    for field ∈ fields # iterate over the fields
+    words = split(review, delim) .|> String; # make strings out of the words
+    for word ∈ words # iterate over the fields
         
-        if ((field ∈ puncuation_skip_set) == false && (field != "")) # if the field is not in the puncuation set, and is not empty
-            push!(tokenset, field); # add the field to the tokens
-            push!(cleaned_fields_data, field); # add the field to the cleaned fields data
+        if ((word ∈ puncuation_skip_set) == false && (word != "")) # if the field is not in the puncuation set, and is not empty
+            
+            cleanedword = _deepclean(word); # clean the field
+            
+            push!(tokenset, cleanedword); # add the field to the tokenset
+            push!(cleaned_fields_data, cleanedword); # add the field to the cleaned fields data
         end
     end
+    push!(tokenset, "<OOV>"); # manually add the <OOV> token to the *record* tokenset
     record.fields = cleaned_fields_data; # set the data on the model
     
     # build an ordering for the tokens -
@@ -61,7 +72,7 @@ function build(model::Type{MyMoviewReviewRecordModel}, line::String; delim::Stri
 
     # set the data on the model -
     record.tokenset = tokenset;
-    record.hash = hash;
+    record.vocabulary = hash;
     record.inverse = inverse;
     
     # return -
@@ -77,17 +88,17 @@ Builds an instance of the `MyMoviewReviewDocumentModel` type from a dictionary o
 - `model::Type{MyMoviewReviewDocumentModel}`: The type of model to build, in this case `MyMoviewReviewDocumentModel`.
 - `records::Dict{Int64, MyMoviewReviewRecordModel}`: A dictionary of records to use for building the document.
 """
-function build(model::Type{MyMoviewReviewDocumentModel}, 
-    records::Dict{Int64, MyMoviewReviewRecordModel})::MyMoviewReviewDocumentModel
+function build(model::Type{MyMoviewReviewDocumentCorpusModel}, 
+    records::Dict{Int64, MyMoviewReviewRecordModel})::MyMoviewReviewDocumentCorpusModel
     
     # initialize -
-    document = MyMoviewReviewDocumentModel(); # build an empty document model
+    corpus = model(); # build an empty document corpus
     tokenset = Set{String}(); # build an empty set
     hash = Dict{String, Int64}();
     inverse = Dict{Int64,String}();
 
     # first, set the records field on the document -
-    document.records = records;
+    corpus.records = records;
 
     # process each record, and build the overall list of tokens for this document -
     for (_, record) ∈ records # iterate over the tokens in the records
@@ -96,7 +107,7 @@ function build(model::Type{MyMoviewReviewDocumentModel},
             push!(tokenset, token); # add the token to the tokenset
         end
     end
-    document.tokenset = tokenset; # set the data on the document
+    corpus.tokenset = tokenset; # set the data on the document
 
     # build an ordering for the tokens -
     token_array = collect(tokenset) |> sort; # convert the set to an array, and sort it
@@ -104,15 +115,15 @@ function build(model::Type{MyMoviewReviewDocumentModel},
         token = token_array[i]; # get the token
         hash[token] = i; # add the token to the dictionary
     end
-    document.hash = hash; # set the data on the document
+    corpus.vocabulary = hash; # set the data on the document
 
     # inverse -
     for (k,v) ∈ hash # iterate over the tokens
         inverse[v] = k; # add the token to the dictionary
     end
-    document.inverse = inverse; # set the data on the document
+    corpus.inverse = inverse; # set the data on the document
 
 
     # return -
-    return document;
+    return corpus;
 end
