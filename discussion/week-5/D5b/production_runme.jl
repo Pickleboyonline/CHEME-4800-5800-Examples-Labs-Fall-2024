@@ -12,11 +12,12 @@ reaction_name_array = Array{String,1}();
 for (k,v) ∈ reactions
     push!(reaction_name_array, v.name)
 end
-sort!(reaction_name_array);
+sort!(reaction_name_array); # sorts the array in place.
 
 # TODO: Build the species_formula_array -
 tmp = Set{String}();
 for (name,model) in reactions
+    
     d_reactants = recursivesplit(model.reactants, delim='+');
     d_products = recursivesplit(model.products, delim='+');
    

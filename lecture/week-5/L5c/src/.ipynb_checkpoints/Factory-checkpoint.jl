@@ -1,30 +1,9 @@
 """
-    function build(type::Type{ArrayBasedBinaryCommodityPriceTree}, data::NamedTuple) -> ArrayBasedBinaryCommodityPriceTree
-
-Builds an `ArrayBasedBinaryCommodityPriceTree` model given the data in the `NamedTuple`.
-
-### Arguments
-- `type::Type{ArrayBasedBinaryCommodityPriceTree}`: The type of the model to build.
-- `data::NamedTuple`: The data to use to build the model.
-
-The `data` `NamedTuple` must contain the following fields:
-- `h::Int64`: The height of the tree.
-- `price::Float64`: The price at the root node.
-- `u::Float64`: The price increase factor.
-- `d::Float64`: The price decrease factor.
-
-### Returns
-- `ArrayBasedBinaryCommodityPriceTree`: the price tree model holding the computed price data.
-
+    build(type::Type{ArrayBasedTernaryCommodityPriceTree}; 
+        h::Int64 = 1, price::Float64 = 1.0, u::Float64 = 0.02, d::Float64 = 0.01) -> ArrayBasedTernaryCommodityPriceTree
 """
-function build(type::Type{ArrayBasedTernaryCommodityPriceTree}, data::NamedTuple)::ArrayBasedTernaryCommodityPriceTree
-
-    # get data -
-    h = data.h;
-    price = data.price;
-    u = data.u;
-    d = data.d;
-
+function build(type::Type{ArrayBasedTernaryCommodityPriceTree}; 
+    h::Int64 = 1, price::Float64 = 1.0, u::Float64 = 0.02, d::Float64 = 0.01)::ArrayBasedTernaryCommodityPriceTree
 
     # initialize -
     model = ArrayBasedTernaryCommodityPriceTree(); # build an emprt tree model -
@@ -63,30 +42,11 @@ function build(type::Type{ArrayBasedTernaryCommodityPriceTree}, data::NamedTuple
 end
 
 """
-    function build(type::Type{AdjacencyBasedTernaryCommodityPriceTree}, data::NamedTuple) -> AdjacencyBasedTernaryCommodityPriceTree
-
-Builds an `AdjacencyBasedTernaryCommodityPriceTree` model given the data in the `NamedTuple`.
-
-### Arguments
-- `type::Type{AdjacencyBasedTernaryCommodityPriceTree}`: The type of the model to build.
-- `data::NamedTuple`: The data to use to build the model.
-
-The `data` `NamedTuple` must contain the following fields:
-- `h::Int64`: The height of the tree.
-- `price::Float64`: The price at the root node.
-- `u::Float64`: The price increase factor.
-- `d::Float64`: The price decrease factor.
-
-### Returns
-- `AdjacencyBasedTernaryCommodityPriceTree`: the price tree model holding the computed price data.
+    build(type::Type{AdjacencyBasedTernaryCommodityPriceTree};
+        h::Int64 = 1, price::Float64 = 1.0, u::Float64 = 0.02, d::Float64 = 0.01) -> AdjacencyBasedTernaryCommodityPriceTree
 """
-function build(type::Type{AdjacencyBasedTernaryCommodityPriceTree}, data::NamedTuple)::AdjacencyBasedTernaryCommodityPriceTree
-
-    # get data -
-    h = data.h;
-    price = data.price;
-    u = data.u;
-    d = data.d;
+function build(type::Type{AdjacencyBasedTernaryCommodityPriceTree};
+    h::Int64 = 1, price::Float64 = 1.0, u::Float64 = 0.02, d::Float64 = 0.01)::AdjacencyBasedTernaryCommodityPriceTree
 
     # initialize -
     model = AdjacencyBasedTernaryCommodityPriceTree(); # build an emprt tree model
